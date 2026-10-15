@@ -1,5 +1,6 @@
 """그 밖의 수집기: 동물병원, 전기차, 수소, 공영주차장, 민방위 대피소, 공휴일."""
 import json, time, urllib.parse, urllib.request
+import re
 from pyproj import Transformer
 from common import ENV, call, pages_xml, num, in_korea, place, log
 
@@ -50,28 +51,58 @@ def _ev_kind(it):
     return 'S' if it.get('chgerType') == '02' else 'F'
 
 
+# 이용 제한 문구 중 "~될 수 있음"처럼 단정이 아닌 안내는 제한으로 치지 않는다(실제 응답 기준)
+_SOFT_LIMIT = re.compile(r'[될할있을] ?수')
+
+
+def _ev_restricted(it):
+    d = (it.get('limitDetail') or '').strip()
+    return it.get('limitYn') == 'Y' and not _SOFT_LIMIT.search(d)
+
+
 def ev():
-    """충전기 행을 충전소 단위로 묶는다. 급속/완속 기수는 x에 문자열로."""
+    """충전기 행을 충전소 단위로 묶는다.
+
+    f/s: 급속·완속 기수. ch: 충전기별 "충전기ID:타입코드:kW:제한(0/1)". pf: 주차 무료(1).
+    lm: 이용 제한 문구, lh: 제한이 단정인 충전기가 있으면 1. ut: 이용 가능 시간.
+    """
     zcodes = ['11', '26', '27', '28', '29', '30', '31', '36', '41', '43', '44', '46', '47', '48', '50', '51', '52']
     st = {}
     for z in zcodes:
         for it in pages_xml('B552584/EvCharger/getChargerInfo', {'zcode': z}, rows=9999):
             if it.get('delYn') == 'Y':
                 continue
-            s = st.setdefault(it['statId'], {'it': it, 'F': 0, 'S': 0, 'ids': []})
+            s = st.setdefault(it['statId'], {'it': it, 'F': 0, 'S': 0, 'ch': [], 'lm': '', 'lh': 0})
             s[_ev_kind(it)] += 1
-            s['ids'].append(it['chgerId'])
+            lim = _ev_restricted(it)
+            kw = num(it.get('output'))
+            s['ch'].append(f"{it['chgerId']}:{it.get('chgerType', '')}:{int(kw) if kw else 0}:{1 if lim else 0}")
+            d = (it.get('limitDetail') or '').strip()
+            if it.get('limitYn') == 'Y' and d and not s['lm']:
+                s['lm'] = d
+            if lim:
+                s['lh'] = 1
     out, bad = [], 0
     for sid, s in st.items():
         it = s['it']
         la, lo = num(it.get('lat')), num(it.get('lng'))
-        if not in_korea(la, lo):
+        # (33.0, 125.0)은 좌표를 못 넣은 등록에 들어가는 기본값이고, "테스트"는 시험 등록이다(실제 응답에서 확인)
+        if not in_korea(la, lo) or (la, lo) == (33.0, 125.0) or '테스트' in (it.get('statNm') or ''):
             bad += 1
             continue
         parts = ([f"급속 {s['F']}기"] if s['F'] else []) + ([f"완속 {s['S']}기"] if s['S'] else [])
         note = ' · '.join(parts + ([it['useTime']] if it.get('useTime') else []))
+        extra = {'f': s['F'], 's': s['S'], 'op': it.get('busiNm'), 'ch': s['ch']}
+        if it.get('parkingFree') == 'Y':
+            extra['pf'] = 1
+        if s['lm']:
+            extra['lm'] = s['lm']
+        if s['lh']:
+            extra['lh'] = 1
+        if it.get('useTime'):
+            extra['ut'] = it['useTime']
         out.append(place(sid, 'EV', it['statNm'], la, lo, (it.get('addr', '') + ' ' + it.get('addrDetail', '')).strip(),
-                         it.get('busiCall'), None, note, f=s['F'], s=s['S'], op=it.get('busiNm')))
+                         it.get('busiCall'), None, note, **extra))
     return out, bad
 
 
