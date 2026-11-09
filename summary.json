@@ -1,0 +1,68 @@
+{
+ "PHARMACY": {
+  "status": "ok",
+  "count": 25442,
+  "dropped_bad_coords": 0,
+  "mode": "grid",
+  "sec": 301
+ },
+ "NIGHT_CLINIC": {
+  "status": "ok",
+  "count": 22644,
+  "dropped_bad_coords": 0,
+  "mode": "grid",
+  "sec": 2098
+ },
+ "ER": {
+  "status": "ok",
+  "count": 530,
+  "dropped_bad_coords": 0,
+  "mode": "all",
+  "sec": 1
+ },
+ "AED": {
+  "status": "ok",
+  "count": 63469,
+  "dropped_bad_coords": 0,
+  "mode": "grid",
+  "sec": 430
+ },
+ "VET": {
+  "status": "ok",
+  "count": 5270,
+  "dropped_bad_coords": 228,
+  "mode": "grid",
+  "sec": 884
+ },
+ "EV": {
+  "status": "ok",
+  "count": 92535,
+  "dropped_bad_coords": 46,
+  "mode": "grid",
+  "sec": 1185
+ },
+ "H2": {
+  "status": "ok",
+  "count": 218,
+  "dropped_bad_coords": 29,
+  "mode": "all",
+  "sec": 139
+ },
+ "PARKING": {
+  "status": "ok",
+  "count": 13818,
+  "dropped_bad_coords": 538,
+  "mode": "grid",
+  "sec": 298
+ },
+ "CIVIL_SHELTER": {
+  "status": "ok",
+  "count": 17229,
+  "dropped_bad_coords": 8,
+  "mode": "grid",
+  "sec": 1748
+ },
+ "HOLIDAYS": {
+  "status": "ok"
+ }
+}

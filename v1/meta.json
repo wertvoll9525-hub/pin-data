@@ -1,0 +1,59 @@
+{
+ "cats": {
+  "PHARMACY": {
+   "mode": "grid",
+   "count": 25442,
+   "source": "국립중앙의료원",
+   "asOf": "2026-11-09"
+  },
+  "NIGHT_CLINIC": {
+   "mode": "grid",
+   "count": 22644,
+   "source": "국립중앙의료원",
+   "asOf": "2026-11-09"
+  },
+  "ER": {
+   "mode": "all",
+   "count": 530,
+   "source": "국립중앙의료원",
+   "asOf": "2026-11-09"
+  },
+  "AED": {
+   "mode": "grid",
+   "count": 63469,
+   "source": "국립중앙의료원",
+   "asOf": "2026-11-09"
+  },
+  "VET": {
+   "mode": "grid",
+   "count": 5270,
+   "source": "행정안전부",
+   "asOf": "2026-11-09"
+  },
+  "EV": {
+   "mode": "grid",
+   "count": 92535,
+   "source": "한국환경공단",
+   "asOf": "2026-11-09"
+  },
+  "H2": {
+   "mode": "all",
+   "count": 218,
+   "source": "한국석유관리원",
+   "asOf": "2026-11-09"
+  },
+  "PARKING": {
+   "mode": "grid",
+   "count": 13818,
+   "source": "한국교통안전공단",
+   "asOf": "2026-11-09"
+  },
+  "CIVIL_SHELTER": {
+   "mode": "grid",
+   "count": 17229,
+   "source": "행정안전부",
+   "asOf": "2026-11-09"
+  }
+ },
+ "generated": "2026-11-09T09:42:16+09:00"
+}
